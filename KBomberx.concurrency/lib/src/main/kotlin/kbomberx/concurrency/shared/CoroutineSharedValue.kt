@@ -1,5 +1,6 @@
 package kbomberx.concurrency.shared
 
+import kbomberx.concurrency.coroutineserver.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
@@ -7,60 +8,40 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.Closeable
 
-class CoroutineSharedValue<T>(initialValue : T,
-                              val scope : CoroutineScope = SharedScope) : Closeable, AutoCloseable {
+class CoroutineSharedValue<T : Any>(initialValue : T,
+                                    private val scope : CoroutineScope = SharedScope) :
+    CoroutineServer(scope) {
 
-    private enum class CmdType {
-        SET, GET, ASYNC_SET, CLOSE
+    companion object {
+        private const val SET_CODE = 1
+        private const val GET_CODE = 2
+        private const val ASYNC_SET_CODE = 3
     }
 
-    private data class Cmd<T>(
-        val cmdType : CmdType,
-        val param : T? = null,
-        val responseChan : Channel<Result<*>> = Channel()
-    )
+    private var value = initialValue
 
-    private val mainChannel = Channel<Cmd<T>>()
+    override suspend fun handleRequest(request: CmdServerRequest) {
+        when(request.requestCode) {
 
-    private val job = scope.launch {
-        var value : T = initialValue
-        var cmd : Cmd<T>
-        var working = true
-        while (working) {
-            try {
-                cmd = mainChannel.receive()
-                when(cmd.cmdType) {
+            GET_CODE -> {
+                replyWithOk(request, value)
+            }
 
-                    CmdType.GET -> {
-                        cmd.responseChan.send(Result.success(value))
-                    }
+            SET_CODE -> {
+                value = request.requestParams[0] as T
+                replyWithOk(request)
+            }
 
-                    CmdType.SET -> {
-                        if(cmd.param != null) {
-                            value = cmd.param!!
-                            cmd.responseChan.send(Result.success(true))
-                        } else {
-                            cmd.responseChan.send(Result
-                                .failure<Unit>(NullPointerException("Unable to set a null value")))
-                        }
-                    }
-
-                    CmdType.ASYNC_SET -> {
-                        if(cmd.param != null) {
-                            value = cmd.param!!
-                        }
-                    }
-
-                    CmdType.CLOSE -> {
-                        mainChannel.close()
-                        working = false
-                    }
+            ASYNC_SET_CODE -> {
+                try {
+                    value = request.requestParams[0] as T
+                } catch (_ : ClassCastException) {
+                    //No response sent (method is async)
                 }
-            } catch (_: ClosedReceiveChannelException) {
-                working = false
             }
         }
     }
+
 
     /**
      * Safely sets the value of this object.
@@ -69,9 +50,9 @@ class CoroutineSharedValue<T>(initialValue : T,
      * @param newValue the value to be set
      */
     suspend fun set(newValue : T) {
-        val cmd = Cmd(CmdType.SET, newValue)
-        mainChannel.send(cmd)
-        cmd.responseChan.receive()
+        val request = requestWithParameter(SET_CODE, newValue)
+        mainChannel.send(request)
+        request.responseChannel.receive()
     }
 
     /**
@@ -80,26 +61,16 @@ class CoroutineSharedValue<T>(initialValue : T,
      * @param newValue the value to be set
      */
     suspend fun asyncSet(newValue: T) {
-        mainChannel.send(Cmd(CmdType.ASYNC_SET, newValue))
+        mainChannel.send(requestWithParameter(ASYNC_SET_CODE, newValue))
     }
 
     /**
      * Safely gets the value of this object
      */
     suspend fun get() : T {
-        val cmd = Cmd<T>(CmdType.GET)
-        mainChannel.send(cmd)
-        return (cmd.responseChan.receive() as Result<T>).getOrThrow()
-    }
-
-    /**
-     * Closes this object and waits until the job associated is terminated
-     */
-    override fun close() {
-        runBlocking {
-            mainChannel.send(Cmd(CmdType.CLOSE))
-            job.join()
-        }
+        val request = basicRequest(GET_CODE)
+        mainChannel.send(request)
+        return request.responseChannel.receive().throwErrorOrGetFirstParameter() as T
     }
 
 
