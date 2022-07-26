@@ -8,6 +8,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.Closeable
 
+/**
+ * A value that can be safely shared between coroutines.
+ * Notice that [get] and [set] operation are synchronous and block the calling
+ * coroutine until the operation is completed, instead [asyncSet] is **asynchronous**
+ * and asks to set the value of this object without waiting for completion
+ */
 class CoroutineSharedValue<T : Any>(initialValue : T,
                                     private val scope : CoroutineScope = SharedScope) :
     CoroutineServer(scope) {
@@ -73,6 +79,25 @@ class CoroutineSharedValue<T : Any>(initialValue : T,
         return request.responseChannel.receive().throwErrorOrGetFirstParameter() as T
     }
 
+    /**
+     * Safely gets the value of this object and then executes
+     * the given [block] passing it
+     * @param block the function that will be executed with this value
+     * @return the get value that has been used with [block]
+     */
+    suspend fun getAndInvoke(block : (T) -> Unit) : T {
+        val item = get()
+        block(item)
+        return item
+    }
 
+    /**
+     * Safely gets and maps the value of this object
+     * @param mapper the function to apply for the transformation
+     * @return the transformed value
+     */
+    suspend fun <R> getAndMap(mapper : (T) -> R) : R {
+        return mapper(get())
+    }
 
 }

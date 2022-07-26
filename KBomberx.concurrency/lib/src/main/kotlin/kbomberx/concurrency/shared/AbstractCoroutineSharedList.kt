@@ -188,11 +188,38 @@ abstract class AbstractCoroutineSharedList<T : Any>(
      * Returns the element at the specified index in the list
      * @throws IndexOutOfBoundsException if the index is not valid
      * @param index the index of the element
+     * @return the element at the specified index in the list
      */
     suspend fun get(index: Int) : T {
         val request = requestWithParameter(GET_CODE, index)
         mainChannel.send(request)
         return request.responseChannel.receive().throwErrorOrGetFirstParameter() as T
+    }
+
+    /**
+     * Safely gets the element at the specified index in the list
+     * then invoke the given [block] with its value
+     * @throws IndexOutOfBoundsException if the index is not valid
+     * @param index the index of the element
+     * @param block the function that will be executed with the element
+     * @return the element at the specified index in the list that has been used
+     * with [block]
+     */
+    suspend fun getAndInvoke(index: Int, block : (T) -> Unit) : T {
+        val item = get(index)
+        block(item)
+        return item
+    }
+
+    /**
+     * Safely gets and maps the element at the specified index in the list
+     * @throws IndexOutOfBoundsException if the index is not valid
+     * @param index the index of the element
+     * @param mapper the function to apply for the transformation
+     * @return the transformed value
+     */
+    suspend fun <R> getAndMap(index : Int, mapper : (T) -> R) : R {
+        return mapper(get(index))
     }
 
     /**
