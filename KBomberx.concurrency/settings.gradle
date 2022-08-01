@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'KBomberx Concurrency'
-include('lib')
+include('kbomberx-concurrency')

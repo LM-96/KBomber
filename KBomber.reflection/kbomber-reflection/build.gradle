@@ -17,6 +17,9 @@ plugins {
     id 'org.jetbrains.dokka' version "$kotlin_ver"
 }
 
+version = '1.0'
+group = 'kbomber.reflection'
+
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
@@ -40,4 +43,15 @@ dependencies {
 
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     api 'org.apache.commons:commons-math3:3.6.1'
+
+    //KOTLIN REFLECTION
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-reflect
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: "$kotlin_ver"
+}
+
+tasks.named('jar') {
+    manifest {
+        attributes('Implementation-Title': project.name,
+                   'Implementation-Version': project.version)
+    }
 }

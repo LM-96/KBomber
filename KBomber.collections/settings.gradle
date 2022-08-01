@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'KBomber Collections'
-include('lib')
+include('kbomber-collections')

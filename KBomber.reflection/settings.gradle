@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'KBomber Reflection'
-include('lib')
+include('kbomber-reflection')

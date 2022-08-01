@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 
 class CoroutineSharedServerTest {
 
-    class Counter {
+    /*class Counter {
 
         companion object {
             const val INCREMENT_NAME = "increment"
@@ -71,7 +71,7 @@ class CoroutineSharedServerTest {
         val getRes = sharedServer.executeService(Counter.GET_NAME)
         assertEquals(Int::class.java, getRes.resultClass)
         assertEquals(currValue + toAdd, getRes.result!! as Int)
-    }
+    }*/
 
 
 }
