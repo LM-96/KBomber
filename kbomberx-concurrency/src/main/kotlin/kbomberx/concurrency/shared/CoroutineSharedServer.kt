@@ -133,6 +133,7 @@ class CoroutineSharedServer<T : Any>(
             return suspendCoroutineUninterceptedOrReturn { continuation -> method.invoke(server, *params, continuation)  }
         }
 
+        service2method[serviceName]!!
         return method.invoke(server, *params)
     }
 

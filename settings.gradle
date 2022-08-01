@@ -1,3 +1,4 @@
-include 'KBomber.collections'
-include 'KBomber.reflection'
-include 'KBomberx.concurrency'
+rootProject.name = 'KBomber'
+include 'kbomber-collections'
+include 'kbomber-reflection'
+include 'kbomberx-concurrency'
