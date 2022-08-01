@@ -1,5 +1,6 @@
 package kbomberx.concurrency.shared
 
+import kbomber.reflection.method.invokeProperly
 import kbomberx.concurrency.coroutineserver.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -107,7 +108,7 @@ class CoroutineSharedServer<T : Any>(
                 var endTime : LocalDateTime
                 try {
                     val res = invokeService( serviceName,
-                        request.requestParams.copyOfRange(1, request.requestParams.size)
+                        request.requestParams.copyOfRange(2, request.requestParams.size)
                     )
                     endTime = LocalDateTime.now()
                     serviceResult = ServiceResult(res, resultClass, null, startTime, endTime)
@@ -125,16 +126,11 @@ class CoroutineSharedServer<T : Any>(
     }
 
     private suspend fun invokeService(serviceName: String, params : Array<out Any>) : Any {
+        params.forEach { p -> println("invokeService($serviceName), param: $p, param.toString: ${p.toString()}") }
         if(!service2method.containsKey(serviceName))
             throw NoSuchElementException("no offered service with name \'$serviceName\'")
 
-        val method = service2method[serviceName]!!
-        if(method.kotlinFunction?.isSuspend == true) {
-            return suspendCoroutineUninterceptedOrReturn { continuation -> method.invoke(server, *params, continuation)  }
-        }
-
-        service2method[serviceName]!!
-        return method.invoke(server, *params)
+        return service2method[serviceName]!!.invokeProperly(server, params)
     }
 
     /**
@@ -179,8 +175,8 @@ class CoroutineSharedServer<T : Any>(
      * @param serviceName the name of the service to execute
      * @return a [ServiceResult] instance that maintains the result
      */
-    suspend fun executeService(serviceName: String) : ServiceResult {
-        val req = requestWithParameter(EXECUTE_SERVICE_CODE, serviceName)
+    suspend fun executeService(serviceName: String, vararg param : Any) : ServiceResult {
+        val req = requestWithParameters(EXECUTE_SERVICE_CODE, serviceName, *param)
         mainChannel.send(req)
         return req.responseChannel.receive().throwErrorOrGetFirstParameter() as ServiceResult
     }
@@ -194,9 +190,9 @@ class CoroutineSharedServer<T : Any>(
      * @param serviceName the name of the service to execute
      * @return a [ReceiveChannel] that receives the result at and of the execution
      */
-    suspend fun asyncExecuteService(serviceName: String) : ReceiveChannel<ServiceResult> {
+    suspend fun asyncExecuteService(serviceName: String, vararg params : Any) : ReceiveChannel<ServiceResult> {
         val svcResultChan = Channel<ServiceResult>()
-        val req = requestWithParameters(ASYNC_EXECUTE_SERVICE_CODE, serviceName, svcResultChan)
+        val req = requestWithParameters(ASYNC_EXECUTE_SERVICE_CODE, serviceName, svcResultChan, *params)
         req.responseChannel.close()
         mainChannel.send(req)
         return svcResultChan

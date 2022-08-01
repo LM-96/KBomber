@@ -72,6 +72,7 @@ fun Method.isSuspendFunction() : Boolean {
  * Use [invokeProperly] to be safer
  * @param obj the object the underlying method is invoked from
  * @param params the arguments used for the method call
+ * @return the result of the invoked function
  */
 suspend fun Method.invokeSuspend(obj : Any, vararg params : Any?) : Any =
     suspendCoroutineUninterceptedOrReturn { continuation -> invoke(obj, *params, continuation) }
@@ -81,12 +82,15 @@ suspend fun Method.invokeSuspend(obj : Any, vararg params : Any?) : Any =
  * If this method is a **suspend** function, then it is invoked using the
  * current coroutine (see [invokeSuspend]); otherwise, it is regularly invoked
  * as a normal method (see [invoke])
+ * @param obj he object the underlying method is invoked from
+ * @param params the arguments used for the method call
+ * @return the result of the invoked function
  */
 suspend fun Method.invokeProperly(obj: Any, vararg params: Any?) : Any {
     if(isSuspendFunction()) {
         return invokeSuspend(obj, params)
     }
-    return invoke(obj, params)
+    return invoke(obj, *params)
 }
 
 /**

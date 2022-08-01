@@ -1,13 +1,11 @@
 package kbomberx.concurrency.shared
 
 import kotlinx.coroutines.runBlocking
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class CoroutineSharedServerTest {
 
-    /*class Counter {
+    class Counter {
 
         companion object {
             const val INCREMENT_NAME = "increment"
@@ -65,13 +63,16 @@ class CoroutineSharedServerTest {
     @Test fun testExecuteAddAndGet() = runBlocking {
         val currValue = counter.value
         val toAdd = 2
-        val addRes = sharedServer.executeService(Counter.ADD_NAME)
+        val addRes = sharedServer.executeService(Counter.ADD_NAME, toAdd)
         assertEquals(Void.TYPE, addRes.resultClass)
 
         val getRes = sharedServer.executeService(Counter.GET_NAME)
         assertEquals(Int::class.java, getRes.resultClass)
+        if(getRes.errorsDuringExecution != null)
+            fail(getRes.errorsDuringExecution!!.stackTraceToString())
+        assertNotNull(getRes.result)
         assertEquals(currValue + toAdd, getRes.result!! as Int)
-    }*/
+    }
 
 
 }
