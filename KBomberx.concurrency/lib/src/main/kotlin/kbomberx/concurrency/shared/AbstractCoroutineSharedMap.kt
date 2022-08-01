@@ -268,7 +268,7 @@ abstract class AbstractCoroutineSharedMap<K : Any, V : Any>(
      * @param value the value
      */
     suspend fun asyncPut(key : K, value : V) {
-        mainChannel.send(requestWithParameters(ASYNC_PUT_CODE, key, value))
+        mainChannel.send(asyncRequestWithParameters(ASYNC_PUT_CODE, key, value))
     }
 
     /**
@@ -276,14 +276,14 @@ abstract class AbstractCoroutineSharedMap<K : Any, V : Any>(
      * @param from the map that contains the element to put
      */
     suspend fun asyncPutAll(from : Map<K, V>) {
-        mainChannel.send(requestWithParameter(ASYNC_PUT_ALL_CODE, from))
+        mainChannel.send(asyncRequestWithParameter(ASYNC_PUT_ALL_CODE, from))
     }
 
     /**
      * **Async** function for [clear]
      */
     suspend fun asyncClear() {
-        mainChannel.send(basicRequest(ASYNC_CLEAR_CODE))
+        mainChannel.send(asyncBasicRequest(ASYNC_CLEAR_CODE))
     }
 
 

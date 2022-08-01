@@ -67,7 +67,7 @@ class CoroutineSharedValue<T : Any>(initialValue : T,
      * @param newValue the value to be set
      */
     suspend fun asyncSet(newValue: T) {
-        mainChannel.send(requestWithParameter(ASYNC_SET_CODE, newValue))
+        mainChannel.send(asyncRequestWithParameter(ASYNC_SET_CODE, newValue))
     }
 
     /**

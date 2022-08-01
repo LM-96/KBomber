@@ -323,7 +323,7 @@ abstract class AbstractCoroutineSharedList<T : Any>(
      * @param item the item to be added
      */
     suspend fun asyncAdd(item: T) {
-        mainChannel.send(requestWithParameter(ASYNC_ADD_CODE, item))
+        mainChannel.send(asyncRequestWithParameter(ASYNC_ADD_CODE, item))
     }
 
     /**
@@ -331,7 +331,7 @@ abstract class AbstractCoroutineSharedList<T : Any>(
      * @param index the index of the element to remove
      */
     suspend fun asyncRemoveAt(index: Int) {
-        mainChannel.send(requestWithParameter(ASYNC_REMOVE_BY_INDEX_CODE, index))
+        mainChannel.send(asyncRequestWithParameter(ASYNC_REMOVE_BY_INDEX_CODE, index))
     }
 
     /**
@@ -339,14 +339,14 @@ abstract class AbstractCoroutineSharedList<T : Any>(
      * @param item the item to be removed
      */
     suspend fun asyncRemove(item : T) {
-        mainChannel.send(requestWithParameter(ASYNC_REMOVE_BY_OBJ_CODE, item))
+        mainChannel.send(asyncRequestWithParameter(ASYNC_REMOVE_BY_OBJ_CODE, item))
     }
 
     /**
      * **Async** function for [clear]
      */
     suspend fun asyncClear() {
-        mainChannel.send(basicRequest(ASYNC_CLEAR_CODE))
+        mainChannel.send(asyncBasicRequest(ASYNC_CLEAR_CODE))
     }
 
     /**
@@ -354,7 +354,7 @@ abstract class AbstractCoroutineSharedList<T : Any>(
      * @param items the [Collection] with the elements to be appended
      */
     suspend fun asyncAddAll(items : Collection<T>) {
-        mainChannel.send(requestWithParameter(ASYNC_ADD_ALL_CODE, items))
+        mainChannel.send(asyncRequestWithParameter(ASYNC_ADD_ALL_CODE, items))
     }
 
 

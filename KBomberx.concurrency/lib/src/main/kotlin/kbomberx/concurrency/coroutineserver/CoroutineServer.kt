@@ -119,6 +119,18 @@ abstract class CoroutineServer(private val scope : CoroutineScope) :
     }
 
     /**
+     * Replies to the given request with a reply with the code of an error
+     * but that contains parameters instead of an exception.
+     * This method also closes the request channel
+     * @param request the request to reply
+     * @param params the parameter for the reply
+     */
+    protected suspend fun replyWithError(request: CmdServerRequest, vararg params : Any) {
+        request.responseChannel.send(ServerReply(ERR_CODE, params))
+        request.responseChannel.close()
+    }
+
+    /**
      * Replies to the given request with a simple ok and closes the request
      * channel
      * @param request the request to reply

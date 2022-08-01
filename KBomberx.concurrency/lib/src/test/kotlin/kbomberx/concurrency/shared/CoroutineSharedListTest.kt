@@ -10,7 +10,7 @@ import kotlin.test.assertTrue
 
 class CoroutineSharedListTest {
 
-    val coroutineSharedList = CoroutineSharedArrayList<String>()
+    private val coroutineSharedList = CoroutineSharedArrayList<String>()
 
     @Before fun clear() {
         runBlocking {
