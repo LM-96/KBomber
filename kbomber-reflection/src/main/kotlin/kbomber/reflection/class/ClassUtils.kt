@@ -1,7 +1,7 @@
 package kbomber.reflection.`class`
 
 /**
- * Returns `true` if the given `clazz` has the superclass `superclazz` in its
+ * Returns `true` if the given `clazz` has the superclass [superclazz] in its
  * hierarchy. Suppose to have this code:
  * ```
  * class A
@@ -11,12 +11,16 @@ package kbomber.reflection.`class`
  * then, `hasSuperclass(C::class.java, A::class.java)` and
  * `hasSuperclass(B::class.java, A::class.java)` both return `true` while
  * `hasSuperclass(A::class.java, C::class.java)` or `hasSuperclass(A::class.java, B::class.java)`
- * both return `false`
+ * both return `false`.
+ * Notice that this method return `false` if the two arguments are objects representing the same class
  * @param clazz the class that should have the required [superclazz] in its hierarchy
  * @param superclazz the superclass
  * @return `true` if the [superclazz] is in the superclass hierarchy of [clazz], `false` otherwise
  */
 fun hasSuperclass(clazz : Class<*>, superclazz : Class<*>) : Boolean {
+    if(clazz == superclazz)
+        return false
+
     var sc = clazz.superclass
     while (sc != null) {
         if(sc == superclazz ) return true

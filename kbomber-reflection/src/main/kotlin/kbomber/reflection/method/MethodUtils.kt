@@ -69,27 +69,33 @@ fun Method.isSuspendFunction() : Boolean {
  * The invocation is done using reflection (see [invoke]).
  * Notice that **an exception is thrown if this [Method] object does not
  * represent a `suspend` *Kotlin* function**.
+ * Notice that if the invoked function is *suspend* and has no return value in its
+ * signature, that [Unit] is returned
  * Use [invokeProperly] to be safer
  * @param obj the object the underlying method is invoked from
  * @param params the arguments used for the method call
  * @return the result of the invoked function
  */
-suspend fun Method.invokeSuspend(obj : Any, vararg params : Any?) : Any =
+suspend fun Method.invokeSuspend(obj : Any, vararg params : Any?) : Any? =
     suspendCoroutineUninterceptedOrReturn { continuation -> invoke(obj, *params, continuation) }
 
 /**
  * Invokes this method considering its nature.
  * If this method is a **suspend** function, then it is invoked using the
  * current coroutine (see [invokeSuspend]); otherwise, it is regularly invoked
- * as a normal method (see [invoke])
+ * as a normal method (see [invoke]).
+ * Notice that if the invoked function is *suspend* and has no return value in its
+ * signature, that [Unit] is returned. In the case of normal function or *Java* method
+ * instead, the behavior is the same of [Method.invoke] function
  * @param obj he object the underlying method is invoked from
  * @param params the arguments used for the method call
  * @return the result of the invoked function
  */
-suspend fun Method.invokeProperly(obj: Any, vararg params: Any?) : Any {
+suspend fun Method.invokeProperly(obj: Any, vararg params: Any?) : Any? {
     if(isSuspendFunction()) {
-        return invokeSuspend(obj, params)
+        return invokeSuspend(obj, *params)
     }
+
     return invoke(obj, *params)
 }
 
@@ -99,6 +105,7 @@ suspend fun Method.invokeProperly(obj: Any, vararg params: Any?) : Any {
  * the given parameter types).
  * Notice that this method works with both *Kotlin* function
  * (also suspend) and *Java* methods.
+ * In *Kotlin*, to indicate an empty return type, use [Unit]
  * @param name the desired name of the method
  * @param returnType the desired return type of the method
  * @param paramTypes the types of the desired params of the method
