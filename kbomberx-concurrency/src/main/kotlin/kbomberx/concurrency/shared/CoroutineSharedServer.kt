@@ -1,4 +1,4 @@
-/*package kbomberx.concurrency.shared
+package kbomberx.concurrency.shared
 
 import kbomber.reflection.method.invokeProperly
 import kbomberx.concurrency.coroutineserver.*
@@ -125,12 +125,12 @@ class CoroutineSharedServer<T : Any>(
         }
     }
 
-    private suspend fun invokeService(serviceName: String, params : Array<out Any>) : Any {
+    private suspend fun invokeService(serviceName: String, params : Array<out Any>) : Any? {
         params.forEach { p -> println("invokeService($serviceName), param: $p, param.toString: ${p.toString()}") }
         if(!service2method.containsKey(serviceName))
             throw NoSuchElementException("no offered service with name \'$serviceName\'")
 
-        return service2method[serviceName]!!.invokeProperly(server, params)
+        return service2method[serviceName]!!.invokeProperly(server, *params)
     }
 
     /**
@@ -199,4 +199,4 @@ class CoroutineSharedServer<T : Any>(
     }
 
 
-}*/
+}
