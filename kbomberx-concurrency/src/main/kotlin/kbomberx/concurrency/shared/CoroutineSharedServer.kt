@@ -1,4 +1,4 @@
-package kbomberx.concurrency.shared
+/*package kbomberx.concurrency.shared
 
 import kbomber.reflection.method.invokeProperly
 import kbomberx.concurrency.coroutineserver.*
@@ -199,4 +199,4 @@ class CoroutineSharedServer<T : Any>(
     }
 
 
-}
+}*/

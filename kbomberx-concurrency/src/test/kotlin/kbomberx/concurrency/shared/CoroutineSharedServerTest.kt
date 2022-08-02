@@ -1,4 +1,4 @@
-package kbomberx.concurrency.shared
+/*package kbomberx.concurrency.shared
 
 import kotlinx.coroutines.runBlocking
 import kotlin.test.*
@@ -75,4 +75,4 @@ class CoroutineSharedServerTest {
     }
 
 
-}
+}*/
