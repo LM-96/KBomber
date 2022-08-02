@@ -3,7 +3,7 @@
 Getting Started
 =====
 KBomber is a personal *Kotlin* set of libraries.
-If you want to use this set in your *Gradle* project, you have to add the [Jitpack](https://jitpack.io/) to the repository in `build.gradle`:
+If you want to use this set in your *Gradle* project, you have to add the [Jitpack](https://jitpack.io/) repository in your `build.gradle`:
 
 	repositories {
     	...
