@@ -13,7 +13,9 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/kbomber-collections" />
             <option value="$PROJECT_DIR$/kbomber-reflection" />
+            <option value="$PROJECT_DIR$/kbomberx-actors" />
             <option value="$PROJECT_DIR$/kbomberx-concurrency" />
+            <option value="$PROJECT_DIR$/kbomberx-io" />
           </set>
         </option>
       </GradleProjectSettings>
