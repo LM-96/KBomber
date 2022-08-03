@@ -23,9 +23,6 @@ group = 'kbomber.concurrency'
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
-
-    //Jitpack
-    maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -56,7 +53,7 @@ dependencies {
     implementation group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: "$kotlin_ver"
 
     //KBOMBER REFLECTION
-    implementation 'com.github.LM-96.KBomber:kbomber-reflection:1.2'
+    implementation project(path: ':kbomber-reflection')
 
 
 }

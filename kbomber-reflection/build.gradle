@@ -17,7 +17,6 @@ plugins {
     id 'org.jetbrains.dokka' version "$kotlin_ver"
 }
 
-version = '1.0'
 group = 'kbomber.reflection'
 
 repositories {

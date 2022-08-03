@@ -17,12 +17,13 @@ plugins {
     id 'org.jetbrains.dokka' version "$kotlin_ver"
 }
 
-version = '1.0'
 group = 'kbomberx.io'
 
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -48,6 +49,9 @@ dependencies {
     //COROUTINES
     // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
     implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: "$coroutine_ver"
+
+    //KBOMBER CONCURRENCY
+    implementation project(path: ':kbomberx-concurrency')
 }
 
 tasks.named('jar') {
