@@ -19,7 +19,7 @@ class ReadWriteAtomicVar<T>(private var value : T) : AbstractReadWriteAtomicVar<
         }
     }
 
-    override suspend fun atomicUseValue(block: (T) -> Unit) {
+    override suspend fun atomicUseValue(block: suspend (T) -> Unit) {
         super.readOperation {
             block(value)
         }
@@ -66,7 +66,7 @@ class ReadWriteAtomicVar<T>(private var value : T) : AbstractReadWriteAtomicVar<
      * that are non-concurrent operations safe to be used in this block
      * @param block the action that will be atomically invoked
      */
-    suspend fun atomicWithValue(block : NonConcurrentVar<T>.() -> Unit) {
+    suspend fun atomicWithValue(block : suspend NonConcurrentVar<T>.() -> Unit) {
         writeOperation {
             nonConcurrentVar.block()
         }

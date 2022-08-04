@@ -24,6 +24,20 @@ import java.io.InputStream
  * will be automatically closed with the new channel.
  * The default capacity of the new channel is [Channel.UNLIMITED] and the default scope
  * for the coroutine that listen from the reader and writes to the channel is [IoScope]
+ * @param reader the reader
+ * @param reply the number of values replayed to new subscribers (cannot be negative,
+ * defaults to zero)
+ * @param extraBufferCapacity the number of values buffered in addition to replay.
+ * [MutableSharedFlow.emit] does not suspend while there is a buffer space remaining (optional,
+ * cannot be negative, defaults to zero)
+ * @param onBufferOverflow configures an [MutableSharedFlow.emit] action on buffer overflow.
+ * Optional, defaults to suspending attempts to emit a value.
+ * Values other than [BufferOverflow.SUSPEND] are supported only when replay > 0 or extraBufferCapacity > 0.
+ * **Buffer overflow can happen only when there is at least one subscriber that is not ready to accept
+ * the new value**. In the absence of subscribers only the most recent [reply] values are stored and
+ * the buffer overflow behavior is never triggered and has no effect
+ * @param scope the scope of the internal listening job (default [IoScope])
+ * @param mapper the transformation function
  */
 class MappedBufferedReaderFlowWrapper<O>(
     private val reader : BufferedReader,

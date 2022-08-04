@@ -64,13 +64,13 @@ class SimpleAtomicVar<T>(private var value : T) : AtomicVar<T> {
      * that are non-concurrent operations safe to be used in this block
      * @param block the action that will be atomically invoked
      */
-    suspend fun atomicWithValue(block : NonConcurrentVar<T>.() -> Unit) {
+    suspend fun atomicWithValue(block : suspend NonConcurrentVar<T>.() -> Unit) {
         mutex.withLock {
             nonConcurrentVar.block()
         }
     }
 
-    override suspend fun atomicUseValue(block : (T) -> Unit) {
+    override suspend fun atomicUseValue(block : suspend (T) -> Unit) {
         mutex.withLock {
             block(value)
         }

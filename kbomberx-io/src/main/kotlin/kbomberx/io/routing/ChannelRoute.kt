@@ -121,6 +121,22 @@ data class ChannelRoute<T>(
         channel.send(data)
     }
 
+    /**
+     * Executes the given [block] if the [passage] is allowed for [msg]
+     * @param msg the message to use for checking passage
+     * @param block the function to be executed if the passage is opened
+     * @return `true` if the passage were opened and [block] has been executed,
+     * `false` otherwise
+     */
+    suspend fun ifPassageAllowed(msg : T, block : (Channel<T>) -> Unit) : Boolean {
+        if(passage(msg)) {
+            block(channel)
+            return true
+        }
+
+        return false
+    }
+
 
 
 }

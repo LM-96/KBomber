@@ -18,6 +18,10 @@ import java.io.InputStream
  * will be automatically closed with the new channel.
  * The default capacity of the new channel is [Channel.UNLIMITED] and the default scope
  * for the coroutine that listen from the reader and writes to the channel is [IoScope]
+ * @param reader the reader
+ * @param capacity the capacity of the channel (default [Channel.UNLIMITED])
+ * @param scope the scope of the internal listening job (default [IoScope])
+ * @param mapper the transformation function
  */
 class MappedBufferedReaderChannelWrapper<O>(
     private val reader : BufferedReader,

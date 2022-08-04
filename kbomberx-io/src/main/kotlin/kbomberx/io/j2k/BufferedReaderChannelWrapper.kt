@@ -17,6 +17,9 @@ import java.io.InputStream
  * will be automatically closed with the new channel.
  * The default capacity of the new channel is [Channel.UNLIMITED] and the default scope
  * for the coroutine that listen from the reader and writes to the channel is [IoScope]
+ * @param reader the reader to be wrapped
+ * @param capacity the capacity of the channel (default [Channel.UNLIMITED])
+ * @param scope the scope of the internal listening job (default [IoScope])
  */
 class BufferedReaderChannelWrapper(
     private val reader : BufferedReader,
@@ -60,6 +63,7 @@ class BufferedReaderChannelWrapper(
         if(!channel.isClosedForSend) {
             channel.close()
         }
+        reader.close()
     }
 
     /**
@@ -68,6 +72,7 @@ class BufferedReaderChannelWrapper(
      * of the internal [BufferedReader]
      */
     override fun close() {
+        reader.close()
         if(!channel.isClosedForSend)
             channel.close()
         runBlocking { job.join() }

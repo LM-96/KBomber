@@ -56,7 +56,7 @@ abstract class AbstractReadWriteAtomicVar<T> : AtomicVar<T> {
      * allowed on this object.
      * @param action the write action that is atomically performed
      */
-    suspend fun writeOperation(action : () -> Unit) {
+    suspend fun writeOperation(action : suspend () -> Unit) {
         writeMutex.withLock {
             action.invoke()
         }
@@ -80,7 +80,7 @@ abstract class AbstractReadWriteAtomicVar<T> : AtomicVar<T> {
         writeMutex.unlock()
     }
 
-    suspend fun readOperation(action : () -> Unit) {
+    suspend fun readOperation(action : suspend () -> Unit) {
         try {
             beginReadOperation()
             action.invoke()

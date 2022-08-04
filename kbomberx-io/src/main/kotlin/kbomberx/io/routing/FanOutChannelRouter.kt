@@ -7,12 +7,17 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.channels.ClosedSendChannelException
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.selects.SelectBuilder
+import java.util.*
 
 /**
  * A router with one input channel and multiple output lines.
  * This router listen on the channel and when one message is received,
  * the message is replicated and sent on each route that has the passage opened
  * for the current message
+ * @param routerName the name of the router
+ * @param sourceChan the source channel that receives data that has to be
+ * replicated to the output routes
+ * @param scope the [CoroutineScope] of the job that realizes the routing functionality
  */
 class FanOutChannelRouter<L>(
     val routerName : String,

@@ -25,7 +25,7 @@ interface AtomicVar<T> {
      * this object
      * @param block the action that will be atomically invoked
      */
-    suspend fun atomicUseValue(block : (T) -> Unit)
+    suspend fun atomicUseValue(block : suspend (T) -> Unit)
 
     /**
      * Atomically map this object
@@ -42,7 +42,7 @@ interface AtomicVar<T> {
      * call methods over this, not even itself** (except for the unlock method as said)
      * This method can be used to block other coroutines until the owner has need.
      * If the coroutine that calls this method has to perform action on this object,
-     * this method should not be used: use [atomicWithValue] instead.
+     * this method should not be used: use [atomicUseValue] instead.
      *
      * See [Mutex.lock] for additional details
      */

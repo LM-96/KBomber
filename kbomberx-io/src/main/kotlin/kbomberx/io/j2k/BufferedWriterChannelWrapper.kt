@@ -14,6 +14,9 @@ import java.io.*
  * will be automatically closed with the new channel.
  * The default capacity of the new channel is [Channel.UNLIMITED] and the default scope
  * for the coroutine that listen from the channel and writes to the writer is [IoScope]
+ * @param writer the writer to be wrapped
+ * @param capacity the capacity of the channel (default [Channel.UNLIMITED])
+ * @param scope the scope of the internal listening job (default [IoScope])
  */
 class BufferedWriterChannelWrapper(
     private val writer: BufferedWriter,

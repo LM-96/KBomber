@@ -13,7 +13,6 @@ import kotlinx.coroutines.selects.SelectBuilder
 import kotlinx.coroutines.selects.select
 import java.io.Closeable
 import java.util.*
-import kotlin.jvm.optionals.getOrNull
 
 /**
  * Abstract class for routers that implements the part of adding
