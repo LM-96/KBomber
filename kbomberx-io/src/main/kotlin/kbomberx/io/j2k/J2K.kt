@@ -99,8 +99,8 @@ fun <O> BufferedReader.mappedReceiveChannel(
  */
 fun BufferedReader.stringSharedFlow(reply : Int = 0,
                                     extraBufferCapacity : Int = 0,
-                                    onBufferOverflow: BufferOverflow,
-                                    scope : CoroutineScope = GlobalScope) : SharedFlow<String> {
+                                    onBufferOverflow: BufferOverflow = BufferOverflow.SUSPEND,
+                                    scope : CoroutineScope = IoScope) : SharedFlow<String> {
     return BufferedReaderFlowWrapper(this, reply, extraBufferCapacity, onBufferOverflow, scope).sharedFlow
 }
 
@@ -123,8 +123,8 @@ fun BufferedReader.stringSharedFlow(reply : Int = 0,
  */
 fun InputStream.stringSharedFlow(reply : Int = 0,
                                     extraBufferCapacity : Int = 0,
-                                    onBufferOverflow: BufferOverflow,
-                                    scope : CoroutineScope = GlobalScope) : SharedFlow<String> {
+                                    onBufferOverflow: BufferOverflow = BufferOverflow.SUSPEND,
+                                    scope : CoroutineScope = IoScope) : SharedFlow<String> {
     return BufferedReaderFlowWrapper(this, reply, extraBufferCapacity, onBufferOverflow, scope).sharedFlow
 }
 
@@ -151,7 +151,7 @@ fun InputStream.stringSharedFlow(reply : Int = 0,
  */
 fun <O> BufferedReader.mappedSharedFlow(reply : Int = 0,
                                         extraBufferCapacity : Int = 0,
-                                        onBufferOverflow: BufferOverflow,
+                                        onBufferOverflow: BufferOverflow = BufferOverflow.SUSPEND,
                                         scope : CoroutineScope = IoScope,
                                         mapper: (String) -> O) : SharedFlow<O> {
     return MappedBufferedReaderFlowWrapper(this,
@@ -179,7 +179,7 @@ fun <O> BufferedReader.mappedSharedFlow(reply : Int = 0,
  */
 fun <O> InputStream.mappedSharedFlow(reply : Int = 0,
                                      extraBufferCapacity : Int = 0,
-                                     onBufferOverflow: BufferOverflow,
+                                     onBufferOverflow: BufferOverflow = BufferOverflow.SUSPEND,
                                      scope : CoroutineScope = IoScope,
                                      mapper: (String) -> O
 ) : SharedFlow<O> {
@@ -211,3 +211,32 @@ fun OutputStream.stringSendChannel(
 fun BufferedWriter.stringSendChannel(
     capacity: Int = Channel.UNLIMITED, scope : CoroutineScope = IoScope) : SendChannel<String>
         = BufferedWriterChannelWrapper(this, capacity, scope).sendChannel
+
+/* WRITERS TO CHANNEL WITH MAP ******************************************************************** */
+/**
+ * Wraps this [OutputStream] to a *Kotlin* [Channel] using a [MappedBufferedWriterChannelWrapper]
+ * instance. The data sent over the resulting [SendChannel] are transformed to string using
+ * the given [mapper].
+ * **Notice that after this call the original stream MUST NO longer be used**
+ * @param capacity the capacity of the channel (default [Channel.UNLIMITED])
+ * @param scope the scope of the internal listening job (default [IoScope])
+ * @param mapper the transformation function
+ * @return the [SendChannel] that can be used instead of this stream
+ */
+fun <T> OutputStream.mappedStringSendChannel(
+    capacity: Int = Channel.UNLIMITED, scope : CoroutineScope = IoScope, mapper : (T) -> String) : SendChannel<T>
+        = MappedBufferedWriterChannelWrapper(this, capacity, scope, mapper).sendChannel
+
+/**
+ * Wraps this [BufferedWriter] to a *Kotlin* [Channel] using a [MappedBufferedWriterChannelWrapper]
+ * instance. The data sent over the resulting [SendChannel] are transformed to string using
+ * the given [mapper].
+ * **Notice that after this call the original writer MUST NO longer be used**
+ * @param capacity the capacity of the channel (default [Channel.UNLIMITED])
+ * @param scope the scope of the internal listening job (default [IoScope])
+ * @param mapper the transformation function
+ * @return the [ReceiveChannel] that can be used instead of this stream
+ */
+fun <T> BufferedWriter.mappedSendChannel(
+    capacity: Int = Channel.UNLIMITED, scope : CoroutineScope = IoScope, mapper : (T) -> String) : SendChannel<T>
+        = MappedBufferedWriterChannelWrapper(this, capacity, scope, mapper).sendChannel

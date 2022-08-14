@@ -10,7 +10,8 @@ import java.io.*
 /**
  * A wrapper class for [BufferedWriter] that *wraps* the standard *Java* buffered writer
  * to a new *Kotlin* [Channel]. The [sendChannel] can be used to send data that will be
- * written on the old writer.
+ * written on the old writer. The object sent to the [sendChannel] are mapped into strings
+ * using [mapper] function.
  * After the creation of the object, the old writer **must no longer be used** and
  * will be automatically closed with the new channel.
  * The default capacity of the new channel is [Channel.UNLIMITED] and the default scope
@@ -18,29 +19,32 @@ import java.io.*
  * @param writer the writer to be wrapped
  * @param capacity the capacity of the channel (default [Channel.UNLIMITED])
  * @param scope the scope of the internal listening job (default [IoScope])
+ * @param mapper the transformation function from [T] to [String]
  */
-class BufferedWriterChannelWrapper(
+class MappedBufferedWriterChannelWrapper<T>(
     private val writer: BufferedWriter,
     private val capacity : Int = Channel.UNLIMITED,
-    private val scope : CoroutineScope = IoScope
+    private val scope : CoroutineScope = IoScope,
+    private val mapper : (T) -> String
 ) : Closeable, AutoCloseable {
 
-    constructor(outputStream: OutputStream, capacity: Int = Channel.UNLIMITED, scope : CoroutineScope = IoScope)
-            : this(outputStream.bufferedWriter(), capacity, scope)
+    constructor(outputStream: OutputStream, capacity: Int = Channel.UNLIMITED, scope : CoroutineScope = IoScope,
+                mapper: (T) -> String)
+            : this(outputStream.bufferedWriter(), capacity, scope, mapper)
 
-    private val channel = Channel<String>(capacity)
+    private val channel = Channel<T>(capacity)
 
     /**
      * The new [Channel] that can be used instead of the old [BufferedWriter]
      */
-    val sendChannel : SendChannel<String> = channel
+    val sendChannel : SendChannel<T> = channel
 
     private val job = scope.launch(Dispatchers.IO) {
-        var line : String = ""
+        var obj : T
         try {
             while(true) {
-                line = channel.receive()
-                writer.write("${line.trim()}\n")
+                obj = channel.receive()
+                writer.write("${mapper(obj)}\n")
                 writer.flush()
             }
         } catch (crce : ClosedReceiveChannelException) {

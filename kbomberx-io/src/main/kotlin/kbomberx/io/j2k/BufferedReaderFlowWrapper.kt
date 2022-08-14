@@ -46,7 +46,7 @@ class BufferedReaderFlowWrapper(
 
     constructor(inputStream: InputStream, reply : Int = 0,
                 extraBufferCapacity : Int = 0,
-                onBufferOverflow: BufferOverflow,
+                onBufferOverflow: BufferOverflow = BufferOverflow.SUSPEND,
                 scope : CoroutineScope = IoScope)
             : this(inputStream.bufferedReader(), reply, extraBufferCapacity, onBufferOverflow, scope)
 

@@ -1,12 +1,11 @@
 package kbomberx.io.routing
 
 import kotlinx.coroutines.channels.*
-import java.util.*
 import kotlin.coroutines.cancellation.CancellationException
 
 /**
- * A route with a [routeName], a [passage] that *indicates* if the route
- * is opened and a [channel] that *relizes* the route
+ * A route with a [name], a [passage] that *indicates* if the route
+ * is opened and a [channel] that *realizes* the route
  */
 data class ChannelRoute<T>(
     /**

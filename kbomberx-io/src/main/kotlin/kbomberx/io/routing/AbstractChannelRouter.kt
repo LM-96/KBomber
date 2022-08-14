@@ -100,7 +100,7 @@ abstract class AbstractChannelRouter<L>(
     }
 
     private suspend fun performRequest(code : Int, vararg params : Any) : ServerReply {
-        val req = requestWithParameter(code, params)
+        val req = CmdServerRequest(code, Channel(), params)
         cmdChannel.send(req)
         return req.responseChannel.receive()
     }

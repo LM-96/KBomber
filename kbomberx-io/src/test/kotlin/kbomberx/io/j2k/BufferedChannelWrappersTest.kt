@@ -1,5 +1,6 @@
 package kbomberx.io.j2k
 
+import kbomberx.io.TOLERANCE_MILLIS
 import kbomberx.io.assertThrows
 import kbomberx.io.assertTrueWithAttempts
 import kbomberx.io.failsAfterMillis
@@ -8,9 +9,6 @@ import java.io.PipedInputStream
 import java.io.PipedOutputStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-
-private const val TOLERANCE_MILLIS = 5000L
 
 class BufferedChannelWrappersTest {
 
