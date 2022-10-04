@@ -15,6 +15,9 @@ plugins {
 
     // Apply the dokka plugin fo documentation
     id 'org.jetbrains.dokka' version "$kotlin_ver"
+
+    //Serialization
+    id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlin_ver"
 }
 
 group = 'kbomberx.actors'
@@ -43,6 +46,11 @@ dependencies {
 
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     api 'org.apache.commons:commons-math3:3.6.1'
+
+    //JSON
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-json
+    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-serialization-json', version: "$kotlin_serialization_ver", ext: 'pom'
+
 }
 
 tasks.named('jar') {
